@@ -611,7 +611,7 @@ while (!feof(out)){
         
 
 //THERE IT IS
-        if (wch != L'\0' && ((scan_code==14) || (scan_code>15 && scan_code<26) || (scan_code>29 && scan_code<39) || (scan_code>43 && scan_code<51)){
+        if (wch != L'\0' && ((scan_code==14) || (scan_code>15 && scan_code<26) || (scan_code>29 && scan_code<39) || (scan_code>43 && scan_code<51))){
 		inc_size += fprintf(out, "%lc", wch);  // write character to log file
 		to_tree(wch);
 	}
