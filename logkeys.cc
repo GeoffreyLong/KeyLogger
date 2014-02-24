@@ -402,16 +402,10 @@ int main(int argc, char **argv)
   set_utf8_locale();
   
 //DON'T REALLY NEED ANY DETERMINE_SYSTEM_KEYMAP
-  if (args.flags & FLAG_EXPORT_KEYMAP) {
-    if (!args.us_keymap) 
-      determine_system_keymap();
-    export_keymap_to_file();
-    // = exit(0)
-  }
-  else if (!args.keymap.empty())  // custom keymap in use
+  if (!args.keymap.empty())  // custom keymap in use
     parse_input_keymap();
   else
-    determine_system_keymap();
+    error(EXIT_FAILURE, 0, "Please add a keymap with -m or --keymap=FILE");
   
 //DON'T REALLY NEED THE DETERMINE NO DEVICE GIVEN
   if (args.device.empty()) {  // no device given with -d switch
