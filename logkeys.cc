@@ -400,6 +400,8 @@ namespace logkeys {
 				continue;
 			}
 
+			//TODO may actually want to reimplement the repeats only with the delete button
+
 			// on key press
 			if (event.value == EV_MAKE) {
 				if (scan_code == KEY_LEFTSHIFT || scan_code == KEY_RIGHTSHIFT)
@@ -424,22 +426,28 @@ namespace logkeys {
 
 					if (wch != L'\0' && ((scan_code==14) || (scan_code>15 && scan_code<26) 
 						|| (scan_code>29 && scan_code<39) || (scan_code>43 && scan_code<51))){
+						
 						inc_size += fprintf(out, "%lc", wch);  // write character to log file
-						to_tree(wch);
+						//Add a key to the last node, increment the node at this location
 					}
 					else{
 						inc_size += fprintf(out, "<");
+						//This is not a good character...use method to reset the root to the root
 					}
 				}
 				else if (is_func_key(scan_code)) {
 					if (scan_code == 14){ // only want the delete from these keys
 						inc_size += fprintf(out, "%ls", func_keys[to_func_keys_index(scan_code)]);
+						//Decrement the element at the current node (unless root)
+						//Move back to the parent of the current node (unless root)
 					}
 					else if (scan_code == KEY_SPACE) {
 						inc_size += fprintf(out, " "); 
+						//May function the same as not a good character...have to decide on this
 					}
 					else {
 						inc_size += fprintf(out, "<");
+						//This is not a good character...use method to reset the root to the root
 					}
 				}
 			} // if (EV_MAKE)
