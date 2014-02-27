@@ -318,17 +318,16 @@ namespace logkeys {
 		//DON'T REALLY NEED THE DETERMINE NO DEVICE GIVEN
 		if (args.device.empty()) {  // no device given with -d switch
 			determine_input_device();
-		} 
-		else {  // event device supplied as -d argument
-			std::string::size_type i = args.device.find_last_of('/');
-			args.device = (std::string(INPUT_EVENT_PATH) + args.device.substr(i == std::string::npos ? 0 : i + 1));
-		}
+		else
+			error(EXIT_FAILURE, errno, "Please use the default device");
+			
 
 		set_signal_handling();
 
 		int nochdir = 0;
 		if (args.logfile[0] != '/')
 			nochdir = 1;  // don't chdir (logfile specified with relative path)
+		
 		int noclose = 1;  // don't close streams (stderr used)
 		if (daemon(nochdir, noclose) == -1)  // become daemon
 			error(EXIT_FAILURE, errno, "Failed to become daemon");
