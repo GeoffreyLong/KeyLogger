@@ -400,22 +400,6 @@ namespace logkeys {
 				continue;
 			}
 
-			// on key repeat ; must check before on key press
-			if (event.value == EV_REPEAT) {
-				++count_repeats;
-			} 
-			else if (count_repeats) {
-				//DON'T REALLY NEED
-				if (prev_code == KEY_RIGHTSHIFT || prev_code == KEY_LEFTCTRL || 
-					prev_code == KEY_RIGHTALT   || prev_code == KEY_LEFTALT  || 
-					prev_code == KEY_LEFTSHIFT  || prev_code == KEY_RIGHTCTRL);  // if repeated key is modifier, do nothing
-				else {
-					// if repeated was function key, and if we don't log function keys, then don't log repeat either
-					if ((args.flags & FLAG_NO_FUNC_KEYS) && is_func_key(prev_code));
-				}
-				count_repeats = 0;  // reset count for future use
-			}
-
 			// on key press
 			if (event.value == EV_MAKE) {
 				if (scan_code == KEY_LEFTSHIFT || scan_code == KEY_RIGHTSHIFT)
